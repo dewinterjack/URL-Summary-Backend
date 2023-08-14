@@ -21,7 +21,7 @@ def summarize():
     try:
         content = extract_content_from_url(url)
         summary = summarize_content(content)
-        return jsonify({'summary': summary})
+        return jsonify({'article': content, 'summary': summary})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
