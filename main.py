@@ -6,9 +6,11 @@ from summarize import summarize_content
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route('/')
 def index():
     return 'Hello from Flask!'
+
 
 @app.route('/fetch-article', methods=['POST'])
 def fetch_article():
@@ -17,10 +19,11 @@ def fetch_article():
         return jsonify({'error': 'URL not provided'}), 400
     url = data['url']
     try:
-        content = extract_content_from_url(url)
-        return jsonify({'article': content})
+        content, title = extract_content_from_url(url)
+        return jsonify({'article': content, 'title': title})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/generate-summary', methods=['POST'])
 def generate_summary():
@@ -34,11 +37,13 @@ def generate_summary():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 def extract_content_from_url(url):
     article = Article(url)
     article.download()
     article.parse()
-    return article.text
+    return article.text, article.title
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=81)
